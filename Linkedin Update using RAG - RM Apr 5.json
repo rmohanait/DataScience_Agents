@@ -1,0 +1,208 @@
+{
+  "name": "Linkedin Update using RAG - RM Apr 5",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -112
+      ],
+      "id": "607956bd-c063-42f9-a6fc-61df435322bd",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Create a LinkedIn post on the specified topic, as per the schedule provided, and post it on LinkedIn.",
+        "options": {
+          "systemMessage": "You are a LinkedIn content creator. You are supposed to create a \nhuman-like post one line at a time, in a conversational style. You have \na search tool and a \"create a LinkedIn post\" tool.\n\nEach day, you are going to:\n1. Always begin with searching a topic.\n2. Always use the Sample Post Tool before you generate the post.\n3. Create a post based on the topic by referencing the sample post.\n4. Post it on LinkedIn.\n\nSchedule:\n- Monday: Look for any recent updates Microsoft is bringing out in terms \n  of AI, generative AI, Copilot, and other enterprise-level stuff.\n- Tuesday: Look for Google AI-related updates, like Google Gemini, models, \n  LLM, and anything that Google is releasing.\n- Wednesday: Look for Claude-related, Anthropic-related news, and make a \n  post based on that.\n- Thursday: Make a post on AI governance and risks that are popping up \n  across a variety of topics.\n- Friday: Do a post on OpenAI, and basically anything that is highly \n  automated, automated agents.\n- Saturday: Give a counterperspective of AI not doing anything.\n- Sunday: Keep it light and say overall what the week has been and the \n  main highlight.\n\nPosting rules:\n- Do not use emojis anywhere unless required to specify the emojis.\n- Do not use an M dash.\n- The first two lines should create curiosity so the user wants to read more.\n- Always use the Date and Time tool to check which day it is before \n  deciding what topic to search."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -96,
+        -144
+      ],
+      "id": "02018b46-8b2c-453e-b016-5f7d26fe899a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        112
+      ],
+      "id": "b3f67b23-df36-49dd-a849-84d34879b33b",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-gemini-search.geminiSearchToolTool",
+      "typeVersion": 1,
+      "position": [
+        48,
+        64
+      ],
+      "id": "011eb718-a5ef-424f-b546-bae501c39d33",
+      "name": "Gemini Search Tool",
+      "credentials": {
+        "geminiSearchApi": {
+          "id": "kqlK4k7Op58M1rwc",
+          "name": "Gemini Credentials account RM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "20TWK1RASw",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedInTool",
+      "typeVersion": 1,
+      "position": [
+        432,
+        96
+      ],
+      "id": "653ed585-e4d8-4c69-9b2d-6c46d1079506",
+      "name": "Create a post in LinkedIn",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "K7SMrXaB82qJ4alD",
+          "name": "LinkedIn account 154"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/16iTLJKW15WS9dHG7NLtccq-KbaekNqq0MDvD1UAbGxQ/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        224,
+        96
+      ],
+      "id": "62964ddb-97e7-4d44-88f3-acb4224dd23d",
+      "name": "Get a document in Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "0YDgf1g5Fgg8twB1",
+          "name": "Google Docs account RM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openrouter/free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        112
+      ],
+      "id": "c935865c-73e9-46c3-b108-3fbb58efc52a",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "C4vrltvYG4LiAKmz",
+          "name": "OpenRouter RM"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Search Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post in LinkedIn": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document in Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "48663158-c458-415c-b19b-8470064a5794",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "966c9717c649ff58138114ad4ec0792ba6c6dbbaefbc75a95d7e5ed34f041958"
+  },
+  "id": "TTWL7AGxpZxWcu46",
+  "tags": []
+}

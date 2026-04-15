@@ -1,0 +1,326 @@
+{
+  "name": "MultiAgent Stock Analysis - RM Apr 12",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -672,
+        -240
+      ],
+      "id": "fe2ae471-d95c-4718-950c-a0f8508a07a3",
+      "name": "When chat message received",
+      "webhookId": "6fa34cad-236e-449c-8d6e-2d815f00a625"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an Orchestrator Agent.\nYour role:\n1. Send the user query to:\n   - Fundamental Analysis Agent\n   - Technical Analysis Agent\n2. Ensure both agents use their search tools before responding.\n3. Collect both outputs.\n4. Combine them into one clear, structured response.\nOutput format:\n- Fundamental Insights:\n- Technical Insights:\n- Final Summary:\nBe concise, no assumptions, only use agent outputs."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -288,
+        -240
+      ],
+      "id": "230d04e0-6e50-4502-a2fc-860b6a288124",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -368,
+        160
+      ],
+      "id": "a24e90c7-f3b1-4ad2-9ad0-8f31bc679247",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        176
+      ],
+      "id": "b354b7dd-5ecd-406d-a483-7da49f57c08e",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rA93wOwzKTg6M2n6",
+          "name": "Google Gemini(PaLM) Api account RM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        576,
+        160
+      ],
+      "id": "29467e29-8db9-4cac-8c8b-7180b1562f08",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rA93wOwzKTg6M2n6",
+          "name": "Google Gemini(PaLM) Api account RM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this Fundamental Analysis Tool only once per user request",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "You are a Fundamental Analysis Agent.\nYour role:\n1. Use the search tool to find recent data (news, earnings, macro trends).\n2. Analyze factors like revenue, growth, industry, sentiment.\n3. Do not answer without using search.\nOutput format:\n- Key Findings:\n- Market Sentiment:\n- Fundamental View (Bullish/Bearish/Neutral):\nBe concise and insight-driven."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        -32,
+        -32
+      ],
+      "id": "040543c5-7a34-4c1a-a0fb-eab54dad1540",
+      "name": "Fundamental Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this Technical Analysis Tool only once per user request",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "You are a Technical Analysis Agent.\nYour role:\n1. Use the search tool to find recent price/indicator data.\n2. Analyze trends, support/resistance, momentum.\n3. Do not answer without using search.\nOutput format:\n- Trend:\n- Key Levels (Support/Resistance):\n- Indicator Signals:\n- Technical View (Bullish/Bearish/Neutral):\nKeep it short and precise."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        656,
+        -32
+      ],
+      "id": "7cb8a98b-3fc7-409f-9f70-2b4c8ad761b1",
+      "name": "Technical Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        144
+      ],
+      "id": "6f2d9445-6a80-4b87-8474-b765cdd7051d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rA93wOwzKTg6M2n6",
+          "name": "Google Gemini(PaLM) Api account RM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "enableUrlContext": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Enable_URL_Context_Tool', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-gemini-search.geminiSearchToolTool",
+      "typeVersion": 1,
+      "position": [
+        240,
+        176
+      ],
+      "id": "b6a7da57-09a2-4292-837a-1cfa84830c2f",
+      "name": "Gemini Search Tool",
+      "credentials": {
+        "geminiSearchApi": {
+          "id": "kqlK4k7Op58M1rwc",
+          "name": "Gemini Credentials account RM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "enableUrlContext": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-gemini-search.geminiSearchToolTool",
+      "typeVersion": 1,
+      "position": [
+        960,
+        144
+      ],
+      "id": "a46f8c02-60d6-4abc-9901-2cbc6dd99f8d",
+      "name": "Gemini Search Tool1",
+      "credentials": {
+        "geminiSearchApi": {
+          "id": "kqlK4k7Op58M1rwc",
+          "name": "Gemini Credentials account RM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "treag9269@gmail.com",
+        "subject": "Hey!1 AI !!",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        -240
+      ],
+      "id": "dc4c493c-9646-4891-9af0-3436c397fac0",
+      "name": "Send a message",
+      "webhookId": "b0909cf5-1bc4-42cb-94d1-eefda97ef250",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DtLWYGlcPjJ6qbJE",
+          "name": "Gmail account RM"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Fundamental Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Technical Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fundamental Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Search Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Fundamental Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Search Tool1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Technical Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "538e4fb7-af71-4b47-87c5-40ab34d11137",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "966c9717c649ff58138114ad4ec0792ba6c6dbbaefbc75a95d7e5ed34f041958"
+  },
+  "id": "Jwt2wAPYBpKVIYtM",
+  "tags": []
+}
