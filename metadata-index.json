@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "description": "Combined index of n8n workflow JSON exports in this repository. Each entry matches the corresponding *.meta.json sidecar.",
+  "repository": "https://github.com/rmohanait/DataScience_Agents",
+  "workflows": [
+    {
+      "schema_version": 1,
+      "workflow_file": "My first workflow Linkedin Updates -  RM Apr 3.json",
+      "sidecar_file": "My first workflow Linkedin Updates -  RM Apr 3.meta.json",
+      "title": "LinkedIn post from chat (first workflow)",
+      "n8n_workflow_name": "My first workflow Linkedin Updates -  RM Apr 3",
+      "summary": "Chat-triggered AI agent that turns a topic into an engaging LinkedIn post using Google Gemini and can publish via the LinkedIn tool, with short conversation memory.",
+      "author_label": "RM",
+      "date_hint": "2026-04-03",
+      "tags": ["n8n", "linkedin", "gemini", "langchain", "chat"],
+      "trigger": {
+        "type": "chat",
+        "description": "When chat message received"
+      },
+      "node_count": 5,
+      "node_types_summary": {
+        "@n8n/n8n-nodes-langchain.chatTrigger": 1,
+        "@n8n/n8n-nodes-langchain.agent": 1,
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini": 1,
+        "@n8n/n8n-nodes-langchain.memoryBufferWindow": 1,
+        "n8n-nodes-base.linkedInTool": 1
+      },
+      "integrations": [
+        "Google Gemini (PaLM) API — language model",
+        "LinkedIn OAuth — create post tool"
+      ],
+      "credentials_required": [
+        "Google Gemini / PaLM API",
+        "LinkedIn OAuth2"
+      ],
+      "notes": "Introductory workflow: agent writes LinkedIn-style content from user messages; credentials must be configured in your n8n instance after import."
+    },
+    {
+      "schema_version": 1,
+      "workflow_file": "Linkedin Update using RAG - RM Apr 5.json",
+      "sidecar_file": "Linkedin Update using RAG - RM Apr 5.meta.json",
+      "title": "LinkedIn updates with RAG (schedule + search)",
+      "n8n_workflow_name": "Linkedin Update using RAG - RM Apr 5",
+      "summary": "Manual-run AI agent that follows a weekday content schedule: searches with Gemini, references a sample post from Google Docs (RAG-style), then drafts and posts to LinkedIn. Uses date/time to pick the topic for the current day.",
+      "author_label": "RM",
+      "date_hint": "2026-04-05",
+      "tags": ["n8n", "linkedin", "rag", "gemini-search", "google-docs", "openrouter", "langchain"],
+      "trigger": {
+        "type": "manual",
+        "description": "When clicking ‘Execute workflow’"
+      },
+      "node_count": 7,
+      "node_types_summary": {
+        "n8n-nodes-base.manualTrigger": 1,
+        "@n8n/n8n-nodes-langchain.agent": 1,
+        "n8n-nodes-base.dateTimeTool": 1,
+        "n8n-nodes-gemini-search.geminiSearchToolTool": 1,
+        "n8n-nodes-base.linkedInTool": 1,
+        "n8n-nodes-base.googleDocsTool": 1,
+        "@n8n/n8n-nodes-langchain.lmChatOpenRouter": 1
+      },
+      "integrations": [
+        "OpenRouter — chat model for the agent",
+        "Gemini Search — web/topic search tool",
+        "Google Docs — sample post / reference content",
+        "LinkedIn — publish post tool",
+        "Date & Time tool — weekday topic selection"
+      ],
+      "credentials_required": [
+        "OpenRouter API (or equivalent for the OpenRouter chat node)",
+        "Gemini Search API",
+        "Google Docs / Google account access for Docs tool",
+        "LinkedIn OAuth2"
+      ],
+      "notes": "After import, reconnect credentials and verify Google Docs document access for the sample-post tool."
+    },
+    {
+      "schema_version": 1,
+      "workflow_file": "MultiAgent Stock Analysis - RM Apr 12.json",
+      "sidecar_file": "MultiAgent Stock Analysis - RM Apr 12.meta.json",
+      "title": "Multi-agent stock analysis (fundamental + technical)",
+      "n8n_workflow_name": "MultiAgent Stock Analysis - RM Apr 12",
+      "summary": "Chat workflow with an orchestrator agent that delegates to specialized agents for fundamental and technical analysis, each using Gemini search tools, then merges results. Includes email output via Gmail.",
+      "author_label": "RM",
+      "date_hint": "2026-04-12",
+      "tags": ["n8n", "stocks", "multi-agent", "gemini", "gmail", "langchain", "chat"],
+      "trigger": {
+        "type": "chat",
+        "description": "When chat message received"
+      },
+      "node_count": 11,
+      "node_types_summary": {
+        "@n8n/n8n-nodes-langchain.chatTrigger": 1,
+        "@n8n/n8n-nodes-langchain.agent": 1,
+        "@n8n/n8n-nodes-langchain.memoryBufferWindow": 1,
+        "@n8n/n8n-nodes-langchain.lmChatGoogleGemini": 3,
+        "@n8n/n8n-nodes-langchain.agentTool": 2,
+        "n8n-nodes-gemini-search.geminiSearchToolTool": 2,
+        "n8n-nodes-base.gmail": 1
+      },
+      "integrations": [
+        "Google Gemini (PaLM) API — multiple chat models for orchestrator and sub-agents",
+        "Gemini Search tools — research before answering",
+        "Gmail — send structured analysis by email"
+      ],
+      "credentials_required": [
+        "Google Gemini / PaLM API",
+        "Gemini Search API",
+        "Gmail OAuth2 or Google API access for Gmail node"
+      ],
+      "notes": "Sub-agents are wired as tools under the orchestrator; re-map credentials and Gmail sender after import."
+    }
+  ]
+}
